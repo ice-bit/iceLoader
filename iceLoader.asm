@@ -42,31 +42,8 @@ real_mode:
     jmp GDT_CODE_SEG:protected_mode ; Long jump to 32 bit mode
 
 ;; Label declarations ;;
-gdt_start:
-    dq 0x0
-gdt_code:
-    dw 0xFFFF
-    dw 0x0
-    db 0x0
-    db 10011010b
-    db 11001111b
-    db 0x0
-gdt_data:
-    dw 0xFFFF
-    dw 0x0
-    db 0x0
-    db 10010010b
-    db 11001111b
-    db 0x0
-gdt_end:
-gdt_point:
-    dw gdt_end - gdt_start
-    dd gdt_start
-disk:
-    db 0x0
-
-GDT_CODE_SEG equ gdt_code - gdt_start
-GDT_DATA_SEG equ gdt_data - gdt_start
+%include "gdt.asm"
+disk: db 0x0
 
 ;; Fill bytes and magic number
 times 510 - ($-$$) db 0 ; Fill remaining space with zeros
@@ -96,11 +73,8 @@ halt:
     cli ; Disable interrupts
     hlt ; Halt the CPU
 
-
 section .bss
 align 4
 kernel_stack_bottom: equ $
     resb 16384 ; Reserve 16 KiB for kernel call function
 kernel_stack_top:
-
-
